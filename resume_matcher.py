@@ -100,8 +100,15 @@ def analyze_resume_match(jd_text, resume_text):
         Return only valid JSON, no additional text.
         """
         
+        # Add timeout for Gemini API call
+        import time
+        start_time = time.time()
         response = model.generate_content(prompt)
         response_text = response.text.strip()
+        
+        # Log processing time
+        processing_time = time.time() - start_time
+        print(f"Gemini API call took {processing_time:.2f} seconds")
         
         # Clean the response to extract JSON
         if response_text.startswith('```json'):
@@ -207,4 +214,6 @@ def results():
     return render_template("results.html")
 
 if __name__ == "__main__":
-    app.run(debug=True, port=5001)
+    port = int(os.environ.get("PORT", 5001))
+    app.run(host="0.0.0.0", port=port, debug=False)
+
