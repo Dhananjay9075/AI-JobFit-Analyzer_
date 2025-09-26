@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: ai-jobfit-analyzer
+    env: python
+    pythonVersion: 3.10.12
+    buildCommand: pip install --prefer-binary --only-binary=:all: -r requirements.txt
+    startCommand: cd flask_new && python resume_matcher.py
+    envVars:
+      - key: PORT
+        value: 10000
