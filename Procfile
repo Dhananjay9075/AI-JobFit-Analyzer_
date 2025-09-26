@@ -1,1 +1,1 @@
-web: cd flask_new && python resume_matcher.py
+web: cd flask_new && gunicorn --bind 0.0.0.0:$PORT resume_matcher:app
