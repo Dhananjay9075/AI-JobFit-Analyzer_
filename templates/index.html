@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Invoice Analyzer</title>
+</head>
+<body>
+    <h2>📟 Invoice Analyzer (Flask Version)</h2>
+    <form method="POST" enctype="multipart/form-data">
+        <label>📄 Upload PDF/Image/Excel files:</label><br>
+        <input type="file" name="files" multiple><br><br>
+
+        <label>📁 Folder paths (comma-separated):</label><br>
+        <input type="text" name="folder_input" size="60"><br><br>
+
+        <label>🔍 Your Query:</label><br>
+        <input type="text" name="query" size="60"><br><br>
+
+        <input type="submit" value="🚀 Analyze">
+    </form>
+
+    {% if images %}
+        <h3>🖼️ Uploaded Images:</h3>
+        {% for img in images %}
+            <img src="{{ url_for('static', filename='uploads/' + img.split('/')[-1]) }}" width="300"><br>
+        {% endfor %}
+    {% endif %}
+
+    {% if response %}
+        <h3>💬 Gemini Response:</h3>
+        <p>{{ response|safe }}</p>
+    {% endif %}
+</body>
+</html>

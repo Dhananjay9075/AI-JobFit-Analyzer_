@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume Matcher - Upload Files</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 300;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .form-container {
+            padding: 40px;
+        }
+
+        .upload-section {
+            margin-bottom: 40px;
+            padding: 25px;
+            border: 2px dashed #e0e0e0;
+            border-radius: 10px;
+            background: #fafafa;
+            transition: all 0.3s ease;
+        }
+
+        .upload-section:hover {
+            border-color: #4facfe;
+            background: #f0f8ff;
+        }
+
+        .upload-section h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+            display: flex;
+            align-items: center;
+        }
+
+        .upload-section h3::before {
+            content: "📄";
+            margin-right: 10px;
+            font-size: 1.2em;
+        }
+
+        .resume-section h3::before {
+            content: "👥";
+        }
+
+        .file-input-wrapper {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .file-input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            background: white;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .file-input:hover {
+            border-color: #4facfe;
+        }
+
+        .file-input:focus {
+            outline: none;
+            border-color: #4facfe;
+            box-shadow: 0 0 0 3px rgba(79, 172, 254, 0.1);
+        }
+
+        .file-info {
+            margin-top: 10px;
+            font-size: 0.9em;
+            color: #666;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.2em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(79, 172, 254, 0.3);
+        }
+
+        .submit-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .alert {
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            font-weight: 500;
+        }
+
+        .alert-error {
+            background: #fee;
+            color: #c33;
+            border: 1px solid #fcc;
+        }
+
+        .alert-success {
+            background: #efe;
+            color: #363;
+            border: 1px solid #cfc;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #4facfe;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .features {
+            background: #f8f9fa;
+            padding: 30px;
+            margin-top: 20px;
+            border-radius: 10px;
+        }
+
+        .features h4 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+
+        .features ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .features li {
+            padding: 8px 0;
+            color: #666;
+            position: relative;
+            padding-left: 25px;
+        }
+
+        .features li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #4facfe;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎯 Resume Matcher</h1>
+            <p>AI-Powered Resume Analysis & Job Description Matching</p>
+        </div>
+
+        <div class="form-container">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <form method="POST" action="/upload" enctype="multipart/form-data" id="uploadForm">
+                <!-- Job Description Upload Section -->
+                <div class="upload-section">
+                    <h3>Job Description</h3>
+                    <div class="file-input-wrapper">
+                        <input type="file" name="jd_file" class="file-input" accept=".pdf" required>
+                    </div>
+                    <div class="file-info">
+                        📋 Upload the job description PDF file (required)
+                    </div>
+                </div>
+
+                <!-- Resume Upload Section -->
+                <div class="upload-section resume-section">
+                    <h3>Resume Files</h3>
+                    <div class="file-input-wrapper">
+                        <input type="file" name="resume_files" class="file-input" accept=".pdf" multiple required>
+                    </div>
+                    <div class="file-info">
+                        👥 Upload up to 5 resume PDF files (required)
+                    </div>
+                </div>
+
+                <button type="submit" class="submit-btn" id="submitBtn">
+                    🚀 Analyze Resumes
+                </button>
+            </form>
+
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p>Analyzing resumes with AI... This may take a few moments.</p>
+            </div>
+
+            <div class="features">
+                <h4>🔍 What We Analyze:</h4>
+                <ul>
+                    <li>Years of experience match with job requirements</li>
+                    <li>Missing technical skills and keywords</li>
+                    <li>Overall job fit and compatibility</li>
+                    <li>Specific improvement suggestions</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('uploadForm').addEventListener('submit', function(e) {
+            const submitBtn = document.getElementById('submitBtn');
+            const loading = document.getElementById('loading');
+            
+            // Show loading state
+            submitBtn.style.display = 'none';
+            loading.style.display = 'block';
+            
+            // Disable form to prevent double submission
+            this.style.pointerEvents = 'none';
+        });
+
+        // File input change handlers
+        document.querySelector('input[name="jd_file"]').addEventListener('change', function(e) {
+            const fileInfo = this.parentNode.nextElementSibling;
+            if (this.files.length > 0) {
+                fileInfo.innerHTML = `📋 Selected: ${this.files[0].name}`;
+            }
+        });
+
+        document.querySelector('input[name="resume_files"]').addEventListener('change', function(e) {
+            const fileInfo = this.parentNode.nextElementSibling;
+            if (this.files.length > 0) {
+                const fileNames = Array.from(this.files).map(f => f.name).join(', ');
+                fileInfo.innerHTML = `👥 Selected ${this.files.length} file(s): ${fileNames}`;
+            }
+        });
+    </script>
+</body>
+</html>
