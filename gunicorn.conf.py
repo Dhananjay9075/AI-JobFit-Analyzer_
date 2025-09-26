@@ -1,4 +1,5 @@
 # Gunicorn configuration file
+import os
 import multiprocessing
 
 # Server socket
@@ -32,5 +33,8 @@ group = None
 tmp_upload_dir = None
 
 # SSL (not needed for Render)
+keyfile = None
+certfile = None
+
 keyfile = None
 certfile = None
